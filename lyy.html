@@ -1,0 +1,2393 @@
+<!doctype html>
+<html lang="id">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analisis Struktur Balok Sederhana</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+        body {
+            box-sizing: border-box;
+        }
+        
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 53%, 80%, 100% { transform: translateY(0); }
+            40%, 43% { transform: translateY(-8px); }
+            70% { transform: translateY(-4px); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+        }
+        
+        .animate-slide-up {
+            animation: slideInUp 0.6s ease-out;
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-in;
+        }
+        
+        .animate-bounce-soft {
+            animation: bounce 2s infinite;
+        }
+        
+        .animate-pulse-soft {
+            animation: pulse 3s infinite;
+        }
+        
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 25%, #fbf7ff 50%, #f3e8ff 75%, #fdf4ff 100%);
+        }
+        
+        .card-soft {
+            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(253,242,248,0.8) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(236,72,153,0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #db2777 0%, #ec4899 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(236,72,153,0.3);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #f472b6 0%, #fbbf24 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #ec4899 0%, #f59e0b 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(244,114,182,0.3);
+        }
+        
+        .input-soft {
+            background: rgba(255,255,255,0.8);
+            border: 2px solid rgba(236,72,153,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .input-soft:focus {
+            background: rgba(255,255,255,0.95);
+            border-color: #ec4899;
+            box-shadow: 0 0 0 3px rgba(236,72,153,0.1);
+        }
+        
+        .diagram-container {
+            transition: all 0.5s ease-in-out;
+        }
+        
+        .diagram-container:hover {
+            transform: scale(1.02);
+        }
+        
+        .load-card {
+            transition: all 0.3s ease;
+        }
+        
+        .load-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(236,72,153,0.15);
+        }
+        
+        .sparkle {
+            position: relative;
+        }
+        
+        .sparkle::after {
+            content: '✨';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            animation: float 2s infinite;
+            font-size: 0.8em;
+        }
+        
+        @keyframes arrowPulse {
+            0%, 100% { 
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% { 
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+        }
+        
+        .animate-arrow-pulse {
+            animation: arrowPulse 2s ease-in-out infinite;
+        }
+        
+        .notification {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .hatch-positive {
+            background-image: repeating-linear-gradient(
+                45deg,
+                rgba(59, 130, 246, 0.3),
+                rgba(59, 130, 246, 0.3) 2px,
+                transparent 2px,
+                transparent 8px
+            );
+        }
+        
+        .hatch-negative {
+            background-image: repeating-linear-gradient(
+                -45deg,
+                rgba(239, 68, 68, 0.3),
+                rgba(239, 68, 68, 0.3) 2px,
+                transparent 2px,
+                transparent 8px
+            );
+        }
+        
+        .slider-thumb::-webkit-slider-thumb {
+            appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ec4899, #f472b6);
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 4px 8px rgba(236, 72, 153, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .slider-thumb::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 6px 12px rgba(236, 72, 153, 0.4);
+        }
+        
+        .slider-thumb::-moz-range-thumb {
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ec4899, #f472b6);
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 4px 8px rgba(236, 72, 153, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        /* Customization Panel Styles */
+        .customization-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 300px;
+            max-height: 80vh;
+            overflow-y: auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(236, 72, 153, 0.2);
+            z-index: 1000;
+            transform: translateX(320px);
+            transition: transform 0.3s ease;
+        }
+
+        .customization-panel.open {
+            transform: translateX(0);
+        }
+
+        .customization-toggle {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ec4899, #f472b6);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 10px 20px rgba(236, 72, 153, 0.3);
+            z-index: 1001;
+            transition: all 0.3s ease;
+        }
+
+        .customization-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 30px rgba(236, 72, 153, 0.4);
+        }
+
+        .color-input {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .font-select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 2px solid rgba(236, 72, 153, 0.2);
+            border-radius: 10px;
+            background: white;
+            font-size: 14px;
+        }
+
+        .font-size-slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: linear-gradient(to right, #ec4899, #f472b6);
+            outline: none;
+            appearance: none;
+        }
+
+        .font-size-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ec4899;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .text-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 2px solid rgba(236, 72, 153, 0.2);
+            border-radius: 10px;
+            background: white;
+            font-size: 14px;
+        }
+
+        .text-input:focus {
+            border-color: #ec4899;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="gradient-bg min-h-full"><!-- Customization Toggle Button --> <button class="customization-toggle" onclick="toggleCustomization()"> 🎨 </button> <!-- Customization Panel -->
+  <div id="customization-panel" class="customization-panel">
+   <h3 class="text-lg font-bold text-pink-600 mb-4 border-b border-pink-200 pb-2">🎨 Kustomisasi</h3><!-- Text Customization -->
+   <div class="mb-6">
+    <h4 class="text-sm font-bold text-slate-700 mb-3">📝 Teks</h4>
+    <div class="space-y-3">
+     <div><label class="block text-xs text-slate-600 mb-1">Sapaan</label> <input type="text" id="greeting-input" class="text-input" value="Halo, Lyly 🌸 Ada yang bisa saya bantu hari ini?" onchange="updateGreeting()">
+     </div>
+     <div><label class="block text-xs text-slate-600 mb-1">Judul Aplikasi</label> <input type="text" id="title-input" class="text-input" value="Analisis Struktur Balok Sederhana" onchange="updateTitle()">
+     </div>
+    </div>
+   </div><!-- Color Customization -->
+   <div class="mb-6">
+    <h4 class="text-sm font-bold text-slate-700 mb-3">🎨 Warna</h4>
+    <div class="grid grid-cols-2 gap-3">
+     <div><label class="block text-xs text-slate-600 mb-1">Background</label> <input type="color" id="bg-color" class="color-input" value="#fdf2f8" onchange="updateColors()">
+     </div>
+     <div><label class="block text-xs text-slate-600 mb-1">Surface</label> <input type="color" id="surface-color" class="color-input" value="#ffffff" onchange="updateColors()">
+     </div>
+     <div><label class="block text-xs text-slate-600 mb-1">Text</label> <input type="color" id="text-color" class="color-input" value="#db2777" onchange="updateColors()">
+     </div>
+     <div><label class="block text-xs text-slate-600 mb-1">Primary</label> <input type="color" id="primary-color" class="color-input" value="#ec4899" onchange="updateColors()">
+     </div>
+     <div class="col-span-2"><label class="block text-xs text-slate-600 mb-1">Secondary</label> <input type="color" id="secondary-color" class="color-input" value="#f472b6" onchange="updateColors()">
+     </div>
+    </div>
+   </div><!-- Font Customization -->
+   <div class="mb-6">
+    <h4 class="text-sm font-bold text-slate-700 mb-3">🔤 Font</h4>
+    <div class="space-y-3">
+     <div><label class="block text-xs text-slate-600 mb-1">Font Family</label> <select id="font-family" class="font-select" onchange="updateFont()"> <option value="Inter">Inter</option> <option value="Arial">Arial</option> <option value="Helvetica">Helvetica</option> <option value="Georgia">Georgia</option> <option value="Times New Roman">Times New Roman</option> <option value="Verdana">Verdana</option> <option value="Roboto">Roboto</option> <option value="Open Sans">Open Sans</option> <option value="Lato">Lato</option> <option value="Montserrat">Montserrat</option> </select>
+     </div>
+     <div><label class="block text-xs text-slate-600 mb-1">Font Size: <span id="font-size-display">16px</span></label> <input type="range" id="font-size" class="font-size-slider" min="12" max="24" value="16" onchange="updateFontSize()">
+     </div>
+    </div>
+   </div><!-- Save/Load Settings -->
+   <div class="space-y-2"><button onclick="saveSettings()" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors"> 💾 Simpan Pengaturan </button> <button onclick="loadSettings()" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors"> 📂 Muat Pengaturan </button> <button onclick="resetSettings()" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors"> 🔄 Reset Default </button>
+   </div>
+  </div>
+  <div class="container mx-auto px-4 py-8 max-w-7xl"><!-- Header -->
+   <div class="text-center mb-10 animate-fade-in">
+    <h1 id="greeting" class="text-4xl md:text-5xl font-bold text-pink-600 mb-3 animate-float sparkle">Halo, Lyly 🌸 Ada yang bisa saya bantu hari ini?</h1>
+    <h2 id="app-title" class="text-2xl md:text-3xl font-semibold text-pink-500 animate-pulse-soft">Analisis Struktur Balok Sederhana</h2>
+    <p class="text-pink-400 mt-2 text-lg">Hitung reaksi tumpuan, gaya lintang, dan momen lentur dengan mudah</p>
+   </div><!-- Input Section -->
+   <div class="grid lg:grid-cols-2 gap-8 mb-10"><!-- Beam Configuration -->
+    <div class="card-soft rounded-3xl shadow-xl p-8 animate-slide-up">
+     <h3 class="text-2xl font-bold text-pink-600 mb-6 border-b-2 border-pink-200 pb-3 animate-bounce-soft">⚙️ Konfigurasi Balok</h3><!-- Beam Length -->
+     <div class="mb-6"><label class="block text-sm font-bold text-slate-700 mb-3">Panjang Balok (L)</label>
+      <div class="flex gap-3"><input type="number" id="beam-length" value="6" min="1" max="50" step="0.5" class="flex-1 px-4 py-3 input-soft rounded-xl focus:outline-none" placeholder="Masukkan panjang balok"> <select id="length-unit" class="px-4 py-3 input-soft rounded-xl focus:outline-none"> <option value="m">meter</option> <option value="cm">cm</option> </select>
+      </div>
+     </div><!-- Support Types -->
+     <div class="mb-6"><label class="block text-sm font-bold text-slate-700 mb-3">Jenis Tumpuan</label>
+      <div class="grid grid-cols-2 gap-4">
+       <div><label class="block text-xs text-slate-600 mb-2 font-semibold">Tumpuan Kiri (A)</label> <select id="left-support" class="w-full px-4 py-3 input-soft rounded-xl focus:outline-none"> <option value="pinned">🔗 Sendi</option> <option value="fixed">🔒 Jepit</option> <option value="roller">⚪ Rol</option> </select>
+       </div>
+       <div><label class="block text-xs text-slate-600 mb-2 font-semibold">Tumpuan Kanan (B)</label> <select id="right-support" class="w-full px-4 py-3 input-soft rounded-xl focus:outline-none"> <option value="pinned">🔗 Sendi</option> <option value="fixed">🔒 Jepit</option> <option value="roller" selected>⚪ Rol</option> </select>
+       </div>
+      </div>
+     </div><!-- Unit Selection -->
+     <div class="mb-6"><label class="block text-sm font-bold text-slate-700 mb-3">Satuan Gaya</label> <select id="force-unit" class="w-full px-4 py-3 input-soft rounded-xl focus:outline-none"> <option value="kN">kN (Kilo Newton)</option> <option value="N">N (Newton)</option> <option value="ton">ton</option> <option value="kg">kg</option> </select>
+     </div>
+    </div><!-- Loads Section -->
+    <div class="card-soft rounded-3xl shadow-xl p-8 animate-slide-up">
+     <h3 class="text-2xl font-bold text-pink-600 mb-6 border-b-2 border-pink-200 pb-3 animate-bounce-soft">📦 Beban pada Balok</h3>
+     <div id="loads-container" class="space-y-4 mb-6 max-h-96 overflow-y-auto"><!-- Dynamic loads will be added here -->
+     </div><button onclick="addLoad()" class="w-full btn-primary text-white font-bold py-4 px-6 rounded-xl shadow-lg mb-4"> ➕ Tambah Beban </button>
+     <div class="flex gap-3"><button onclick="calculate()" class="flex-1 btn-primary text-white font-bold py-4 px-6 rounded-xl shadow-lg"> 🧮 Hitung Analisis </button> <button onclick="resetAll()" class="btn-secondary text-white font-bold py-4 px-6 rounded-xl shadow-lg"> 🔄 Reset </button>
+     </div>
+    </div>
+   </div><!-- Results Section -->
+   <div id="results-section" class="hidden animate-slide-up"><!-- Beam Visualization -->
+    <div class="card-soft rounded-3xl shadow-xl p-8 mb-8 diagram-container">
+     <h3 class="text-2xl font-bold text-pink-600 mb-6 text-center animate-float sparkle">🏗️ Visualisasi Balok dan Beban</h3>
+     <div class="flex justify-center overflow-x-auto">
+      <canvas id="beam-canvas" width="1200" height="400" class="max-w-full rounded-2xl shadow-lg"></canvas>
+     </div>
+    </div><!-- Equilibrium Check -->
+    <div id="equilibrium-section" class="card-soft rounded-3xl shadow-xl p-8 mb-8">
+     <h3 class="text-2xl font-bold text-pink-600 mb-6 border-b-2 border-pink-200 pb-3 sparkle">⚖️ Kontrol Keseimbangan</h3>
+     <div id="equilibrium-content" class="grid md:grid-cols-2 gap-6"><!-- Equilibrium results will be populated here -->
+     </div>
+    </div><!-- Numerical Results -->
+    <div class="card-soft rounded-3xl shadow-xl p-8 mb-8">
+     <h3 class="text-2xl font-bold text-pink-600 mb-6 border-b-2 border-pink-200 pb-3 animate-pulse-soft sparkle">📊 Hasil Perhitungan Reaksi</h3>
+     <div id="results-content" class="grid md:grid-cols-3 gap-6"><!-- Results will be populated here -->
+     </div>
+    </div><!-- Diagrams -->
+    <div class="grid lg:grid-cols-2 gap-8 mb-8"><!-- Shear Force Diagram -->
+     <div class="card-soft rounded-3xl shadow-xl p-8 diagram-container">
+      <h3 class="text-2xl font-bold text-pink-600 mb-6 text-center animate-bounce-soft">📈 Diagram Gaya Lintang (SFD)</h3>
+      <div class="flex justify-center overflow-x-auto">
+       <canvas id="shear-canvas" width="600" height="500" class="max-w-full rounded-2xl shadow-lg"></canvas>
+      </div>
+     </div><!-- Bending Moment Diagram -->
+     <div class="card-soft rounded-3xl shadow-xl p-8 diagram-container">
+      <h3 class="text-2xl font-bold text-pink-600 mb-6 text-center animate-bounce-soft">📉 Diagram Momen Lentur (BMD)</h3>
+      <div class="flex justify-center overflow-x-auto">
+       <canvas id="moment-canvas" width="600" height="500" class="max-w-full rounded-2xl shadow-lg"></canvas>
+      </div>
+     </div>
+    </div><!-- Summary Table -->
+    <div class="card-soft rounded-3xl shadow-xl p-8 mb-8">
+     <h3 class="text-2xl font-bold text-pink-600 mb-6 text-center sparkle">📋 Ringkasan Hasil Analisis</h3>
+     <div id="summary-table" class="overflow-x-auto"><!-- Summary table will be populated here -->
+     </div>
+    </div><!-- Download Section -->
+    <div class="card-soft rounded-3xl shadow-xl p-8 text-center">
+     <h3 class="text-2xl font-bold text-pink-600 mb-6 animate-float sparkle">💾 Download Hasil Analisis</h3>
+     <div class="flex flex-wrap justify-center gap-4"><button onclick="downloadDiagram('beam')" class="btn-primary text-white font-semibold py-3 px-6 rounded-xl shadow-lg"> 📥 Download Visualisasi </button> <button onclick="downloadDiagram('shear')" class="btn-secondary text-white font-semibold py-3 px-6 rounded-xl shadow-lg"> 📥 Download SFD </button> <button onclick="downloadDiagram('moment')" class="btn-primary text-white font-semibold py-3 px-6 rounded-xl shadow-lg"> 📥 Download BMD </button> <button onclick="downloadResults()" class="btn-secondary text-white font-semibold py-3 px-6 rounded-xl shadow-lg"> 📄 Download Laporan </button>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+        let loads = [];
+        let loadCounter = 0;
+        let analysisResults = null;
+        let customizationOpen = false;
+
+        // Default configuration
+        const defaultConfig = {
+            greetingText: "Halo, Lyly 🌸 Ada yang bisa saya bantu hari ini?",
+            appTitle: "Analisis Struktur Balok Sederhana",
+            backgroundColor: "#fdf2f8",
+            surfaceColor: "#ffffff",
+            textColor: "#db2777",
+            primaryColor: "#ec4899",
+            secondaryColor: "#f472b6",
+            fontFamily: "Inter",
+            fontSize: 16
+        };
+
+        // Load saved settings on page load
+        function loadSavedSettings() {
+            const saved = localStorage.getItem('beamAnalysisSettings');
+            if (saved) {
+                const settings = JSON.parse(saved);
+                
+                // Update form inputs
+                document.getElementById('greeting-input').value = settings.greetingText || defaultConfig.greetingText;
+                document.getElementById('title-input').value = settings.appTitle || defaultConfig.appTitle;
+                document.getElementById('bg-color').value = settings.backgroundColor || defaultConfig.backgroundColor;
+                document.getElementById('surface-color').value = settings.surfaceColor || defaultConfig.surfaceColor;
+                document.getElementById('text-color').value = settings.textColor || defaultConfig.textColor;
+                document.getElementById('primary-color').value = settings.primaryColor || defaultConfig.primaryColor;
+                document.getElementById('secondary-color').value = settings.secondaryColor || defaultConfig.secondaryColor;
+                document.getElementById('font-family').value = settings.fontFamily || defaultConfig.fontFamily;
+                document.getElementById('font-size').value = settings.fontSize || defaultConfig.fontSize;
+                
+                // Apply settings
+                applySettings(settings);
+            }
+        }
+
+        function applySettings(config) {
+            const greetingEl = document.getElementById('greeting');
+            const appTitleEl = document.getElementById('app-title');
+            
+            if (greetingEl) {
+                greetingEl.textContent = config.greetingText || defaultConfig.greetingText;
+            }
+            if (appTitleEl) {
+                appTitleEl.textContent = config.appTitle || defaultConfig.appTitle;
+            }
+
+            const bgColor = config.backgroundColor || defaultConfig.backgroundColor;
+            const surfaceColor = config.surfaceColor || defaultConfig.surfaceColor;
+            const textColor = config.textColor || defaultConfig.textColor;
+            const primaryColor = config.primaryColor || defaultConfig.primaryColor;
+            const secondaryColor = config.secondaryColor || defaultConfig.secondaryColor;
+            const customFont = config.fontFamily || defaultConfig.fontFamily;
+            const baseSize = config.fontSize || defaultConfig.fontSize;
+
+            // Apply background gradient
+            document.body.style.background = `linear-gradient(135deg, ${bgColor} 0%, ${adjustColor(bgColor, 10)} 25%, ${adjustColor(bgColor, 20)} 50%, ${adjustColor(bgColor, 15)} 75%, ${adjustColor(bgColor, 25)} 100%)`;
+            document.body.style.fontFamily = `${customFont}, Inter, system-ui, sans-serif`;
+            document.body.style.fontSize = `${baseSize}px`;
+
+            // Apply text colors and sizes
+            if (greetingEl) {
+                greetingEl.style.color = textColor;
+                greetingEl.style.fontSize = `${baseSize * 2.5}px`;
+            }
+            if (appTitleEl) {
+                appTitleEl.style.color = adjustColor(textColor, 20);
+                appTitleEl.style.fontSize = `${baseSize * 1.5}px`;
+            }
+
+            // Apply card backgrounds
+            const cards = document.querySelectorAll('.card-soft');
+            cards.forEach(card => {
+                card.style.background = `linear-gradient(135deg, ${surfaceColor}e6 0%, ${adjustColor(surfaceColor, -5)}cc 100%)`;
+            });
+
+            // Apply heading colors
+            const headings = document.querySelectorAll('h3');
+            headings.forEach(h => {
+                h.style.color = textColor;
+                h.style.fontSize = `${baseSize * 1.25}px`;
+            });
+
+            // Apply label colors
+            const labels = document.querySelectorAll('label');
+            labels.forEach(label => {
+                label.style.color = adjustColor(textColor, 30);
+                label.style.fontSize = `${baseSize * 0.875}px`;
+            });
+
+            // Apply button colors
+            const primaryBtns = document.querySelectorAll('.btn-primary');
+            primaryBtns.forEach(btn => {
+                btn.style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${adjustColor(primaryColor, 10)} 100%)`;
+            });
+
+            const secondaryBtns = document.querySelectorAll('.btn-secondary');
+            secondaryBtns.forEach(btn => {
+                btn.style.background = `linear-gradient(135deg, ${secondaryColor} 0%, ${adjustColor(secondaryColor, 20)} 100%)`;
+            });
+
+            // Update font size display
+            document.getElementById('font-size-display').textContent = `${baseSize}px`;
+        }
+
+        function adjustColor(color, percent) {
+            const num = parseInt(color.replace("#",""), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = Math.max(0, Math.min(255, (num >> 16) + amt));
+            const G = Math.max(0, Math.min(255, (num >> 8 & 0x00FF) + amt));
+            const B = Math.max(0, Math.min(255, (num & 0x0000FF) + amt));
+            return "#" + (0x1000000 + R*0x10000 + G*0x100 + B).toString(16).slice(1);
+        }
+
+        // Customization functions
+        function toggleCustomization() {
+            const panel = document.getElementById('customization-panel');
+            customizationOpen = !customizationOpen;
+            
+            if (customizationOpen) {
+                panel.classList.add('open');
+            } else {
+                panel.classList.remove('open');
+            }
+        }
+
+        function updateGreeting() {
+            const value = document.getElementById('greeting-input').value;
+            document.getElementById('greeting').textContent = value;
+        }
+
+        function updateTitle() {
+            const value = document.getElementById('title-input').value;
+            document.getElementById('app-title').textContent = value;
+        }
+
+        function updateColors() {
+            const config = {
+                greetingText: document.getElementById('greeting-input').value,
+                appTitle: document.getElementById('title-input').value,
+                backgroundColor: document.getElementById('bg-color').value,
+                surfaceColor: document.getElementById('surface-color').value,
+                textColor: document.getElementById('text-color').value,
+                primaryColor: document.getElementById('primary-color').value,
+                secondaryColor: document.getElementById('secondary-color').value,
+                fontFamily: document.getElementById('font-family').value,
+                fontSize: parseInt(document.getElementById('font-size').value)
+            };
+            applySettings(config);
+        }
+
+        function updateFont() {
+            updateColors(); // Reapply all settings including font
+        }
+
+        function updateFontSize() {
+            const size = document.getElementById('font-size').value;
+            document.getElementById('font-size-display').textContent = `${size}px`;
+            updateColors(); // Reapply all settings including font size
+        }
+
+        function saveSettings() {
+            const settings = {
+                greetingText: document.getElementById('greeting-input').value,
+                appTitle: document.getElementById('title-input').value,
+                backgroundColor: document.getElementById('bg-color').value,
+                surfaceColor: document.getElementById('surface-color').value,
+                textColor: document.getElementById('text-color').value,
+                primaryColor: document.getElementById('primary-color').value,
+                secondaryColor: document.getElementById('secondary-color').value,
+                fontFamily: document.getElementById('font-family').value,
+                fontSize: parseInt(document.getElementById('font-size').value)
+            };
+            
+            localStorage.setItem('beamAnalysisSettings', JSON.stringify(settings));
+            showNotification('Pengaturan berhasil disimpan! 💾✨', 'success');
+        }
+
+        function loadSettings() {
+            loadSavedSettings();
+            showNotification('Pengaturan berhasil dimuat! 📂✨', 'success');
+        }
+
+        function resetSettings() {
+            // Reset form inputs to defaults
+            document.getElementById('greeting-input').value = defaultConfig.greetingText;
+            document.getElementById('title-input').value = defaultConfig.appTitle;
+            document.getElementById('bg-color').value = defaultConfig.backgroundColor;
+            document.getElementById('surface-color').value = defaultConfig.surfaceColor;
+            document.getElementById('text-color').value = defaultConfig.textColor;
+            document.getElementById('primary-color').value = defaultConfig.primaryColor;
+            document.getElementById('secondary-color').value = defaultConfig.secondaryColor;
+            document.getElementById('font-family').value = defaultConfig.fontFamily;
+            document.getElementById('font-size').value = defaultConfig.fontSize;
+            
+            // Apply default settings
+            applySettings(defaultConfig);
+            
+            // Clear localStorage
+            localStorage.removeItem('beamAnalysisSettings');
+            
+            showNotification('Pengaturan direset ke default! 🔄✨', 'info');
+        }
+
+        function addLoad() {
+            loadCounter++;
+            const loadId = `load-${loadCounter}`;
+            const container = document.getElementById('loads-container');
+            
+            const loadDiv = document.createElement('div');
+            loadDiv.className = 'load-card card-soft border-2 border-pink-200 rounded-2xl p-6 shadow-lg';
+            loadDiv.id = loadId;
+            loadDiv.innerHTML = `
+                <div class="flex justify-between items-center mb-4">
+                    <h4 class="font-bold text-pink-700 text-lg">🎯 Beban ${loadCounter}</h4>
+                    <button onclick="removeLoad('${loadId}')" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all transform hover:scale-105">
+                        ❌ Hapus
+                    </button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Jenis Beban</label>
+                        <select id="${loadId}-type" onchange="updateLoadInputs('${loadId}')" class="w-full px-4 py-3 input-soft rounded-xl focus:outline-none">
+                            <option value="point">📍 Beban Titik (Point Load)</option>
+                            <option value="point-angled">📐 Beban Titik Miring (Angled Load)</option>
+                            <option value="oblique">🔄 Beban Miring (Oblique Load)</option>
+                            <option value="udl">📏 Beban Merata (UDL)</option>
+                            <option value="triangular">📐 Beban Segitiga (Triangular)</option>
+                        </select>
+                    </div>
+                    <div id="${loadId}-inputs" class="space-y-3">
+                        <!-- Dynamic inputs will be added here -->
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(loadDiv);
+            loads.push({ id: loadId, type: 'point' });
+            updateLoadInputs(loadId);
+        }
+
+        function removeLoad(loadId) {
+            const element = document.getElementById(loadId);
+            if (element) {
+                element.style.transform = 'scale(0.8)';
+                element.style.opacity = '0';
+                setTimeout(() => {
+                    element.remove();
+                    loads = loads.filter(load => load.id !== loadId);
+                }, 300);
+            }
+        }
+
+        function updateAngleSlider(loadId) {
+            const angleInput = document.getElementById(`${loadId}-angle`);
+            const angleSlider = document.getElementById(`${loadId}-angle-slider`);
+            const angle = parseFloat(angleInput.value) || 0;
+            
+            if (angle >= 0 && angle <= 360) {
+                angleSlider.value = angle;
+                updateAngleDisplay(loadId, angle);
+            }
+        }
+
+        function updateAngleInput(loadId) {
+            const angleInput = document.getElementById(`${loadId}-angle`);
+            const angleSlider = document.getElementById(`${loadId}-angle-slider`);
+            const angle = parseFloat(angleSlider.value);
+            
+            angleInput.value = angle;
+            updateAngleDisplay(loadId, angle);
+        }
+
+        function updateAngleDisplay(loadId, angle) {
+            const quadrantEl = document.getElementById(`${loadId}-quadrant`);
+            const fxDisplayEl = document.getElementById(`${loadId}-fx-display`);
+            const fyDisplayEl = document.getElementById(`${loadId}-fy-display`);
+            const magnitudeInput = document.getElementById(`${loadId}-magnitude`);
+            
+            if (!quadrantEl || !fxDisplayEl || !fyDisplayEl) return;
+            
+            // Determine quadrant
+            let quadrant = '';
+            if (angle >= 0 && angle < 90) quadrant = 'Kuadran I';
+            else if (angle >= 90 && angle < 180) quadrant = 'Kuadran II';
+            else if (angle >= 180 && angle < 270) quadrant = 'Kuadran III';
+            else if (angle >= 270 && angle <= 360) quadrant = 'Kuadran IV';
+            
+            quadrantEl.textContent = quadrant;
+            
+            // Calculate components if magnitude is available
+            const magnitude = parseFloat(magnitudeInput?.value) || 10;
+            const angleRad = (angle * Math.PI) / 180;
+            const fx = magnitude * Math.cos(angleRad);
+            const fy = magnitude * Math.sin(angleRad);
+            
+            fxDisplayEl.innerHTML = `• Horizontal (Fx) = ${fx.toFixed(2)} ${fx >= 0 ? '→' : '←'}`;
+            fyDisplayEl.innerHTML = `• Vertikal (Fy) = ${fy.toFixed(2)} ${fy >= 0 ? '↑' : '↓'}`;
+        }
+
+        function updateLoadInputs(loadId) {
+            const typeSelect = document.getElementById(`${loadId}-type`);
+            const inputsDiv = document.getElementById(`${loadId}-inputs`);
+            const type = typeSelect.value;
+            
+            const load = loads.find(l => l.id === loadId);
+            if (load) load.type = type;
+            
+            let inputsHTML = '';
+            
+            if (type === 'point') {
+                inputsHTML = `
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Besar Beban (P)</label>
+                        <input type="number" id="${loadId}-magnitude" value="10" step="0.1" min="0" 
+                               class="w-full px-4 py-3 input-soft rounded-xl focus:outline-none"
+                               placeholder="Masukkan besar beban">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Posisi dari Kiri (x)</label>
+                        <input type="number" id="${loadId}-position" value="3" step="0.1" min="0" 
+                               class="w-full px-4 py-3 input-soft rounded-xl focus:outline-none"
+                               placeholder="Posisi beban">
+                    </div>
+                `;
+            } else if (type === 'point-angled') {
+                inputsHTML = `
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Besar Beban (P)</label>
+                        <input type="number" id="${loadId}-magnitude" value="10" step="0.1" min="0" 
+                               class="w-full px-4 py-3 input-soft rounded-xl focus:outline-none"
+                               placeholder="Masukkan besar beban">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Posisi dari Kiri (x)</label>
+                        <input type="number" id="${loadId}-position" value="3" step="0.1" min="0" 
+                               class="w-full px-4 py-3 input-soft rounded-xl focus:outline-none"
+                               placeholder="Posisi beban">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Sudut dari Vertikal</label>
+                        <div class="flex gap-3">
+                            <input type="number" id="${loadId}-angle" value="30" step="0.1" min="-90" max="90"
+                                   class="flex-1 px-4 py-3 input-soft rounded-xl focus:outline-none"
+                                   placeholder="Masukkan sudut">
+                            <select id="${loadId}-angle-unit" class="px-4 py-3 input-soft rounded-xl focus:outline-none">
+                                <option value="degrees">Derajat (°)</option>
+                                <option value="radians">Radian (rad)</option>
+                            </select>
+                        </div>
+                        <div class="text-xs text-slate-500 mt-1">
+                            Positif: miring ke kanan, Negatif: miring ke kiri
+                        </div>
+                    </div>
+                `;
+            } else if (type === 'oblique') {
+                inputsHTML = `
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Besar Beban (P)</label>
+                        <input type="number" id="${loadId}-magnitude" value="10" step="0.1" min="0" 
+                               oninput="updateAngleDisplay('${loadId}', parseFloat(document.getElementById('${loadId}-angle').value) || 30)"
+                               class="w-full px-4 py-3 input-soft rounded-xl focus:outline-none"
+                               placeholder="Masukkan besar beban">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Posisi dari Kiri (x)</label>
+                        <input type="number" id="${loadId}-position" value="3" step="0.1" min="0" 
+                               class="w-full px-4 py-3 input-soft rounded-xl focus:outline-none"
+                               placeholder="Posisi beban">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Sudut Kemiringan (θ)</label>
+                        <div class="flex gap-3 mb-3">
+                            <input type="number" id="${loadId}-angle" value="30" step="1" min="0" max="360"
+                                   oninput="updateAngleSlider('${loadId}')"
+                                   class="flex-1 px-4 py-3 input-soft rounded-xl focus:outline-none"
+                                   placeholder="0-360 derajat">
+                            <div class="px-4 py-3 bg-pink-100 rounded-xl text-pink-700 font-semibold">
+                                Derajat (°)
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <input type="range" id="${loadId}-angle-slider" min="0" max="360" value="30" step="1"
+                                   oninput="updateAngleInput('${loadId}')"
+                                   class="w-full h-3 bg-gradient-to-r from-pink-200 via-purple-200 to-pink-200 rounded-lg appearance-none cursor-pointer slider-thumb">
+                            <div class="flex justify-between text-xs text-slate-500 mt-1">
+                                <span>0°</span>
+                                <span>90°</span>
+                                <span>180°</span>
+                                <span>270°</span>
+                                <span>360°</span>
+                            </div>
+                        </div>
+                        <div class="text-xs text-slate-500 mb-3">
+                            <span id="${loadId}-quadrant">Kuadran I</span> • 
+                            0° = vertikal ke bawah, 90° = horizontal ke kanan, 180° = vertikal ke atas, 270° = horizontal ke kiri
+                        </div>
+                        <div class="mt-3 p-3 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl border border-pink-200">
+                            <div class="text-sm font-semibold text-pink-700 mb-2">📊 Komponen Gaya:</div>
+                            <div class="text-xs text-slate-600 space-y-1">
+                                <div id="${loadId}-fx-display">• Horizontal (Fx) = P × cos(θ)</div>
+                                <div id="${loadId}-fy-display">• Vertikal (Fy) = P × sin(θ)</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (type === 'udl') {
+                inputsHTML = `
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Intensitas Beban (w)</label>
+                        <input type="number" id="${loadId}-intensity" value="5" step="0.1" min="0" 
+                               class="w-full px-4 py-3 input-soft rounded-xl focus:outline-none"
+                               placeholder="Intensitas per meter">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Mulai dari (x₁)</label>
+                        <input type="number" id="${loadId}-start" value="0" step="0.1" min="0" 
+                               class="w-full px-4 py-3 input-soft rounded-xl focus:outline-none"
+                               placeholder="Posisi awal">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Sampai (x₂)</label>
+                        <input type="number" id="${loadId}-end" value="6" step="0.1" min="0" 
+                               class="w-full px-4 py-3 input-soft rounded-xl focus:outline-none"
+                               placeholder="Posisi akhir">
+                    </div>
+                `;
+            } else if (type === 'triangular') {
+                inputsHTML = `
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Intensitas Maksimum (w_max)</label>
+                        <input type="number" id="${loadId}-max-intensity" value="10" step="0.1" min="0" 
+                               class="w-full px-4 py-3 input-soft rounded-xl focus:outline-none"
+                               placeholder="Intensitas maksimum">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Mulai dari (x₁)</label>
+                        <input type="number" id="${loadId}-start" value="0" step="0.1" min="0" 
+                               class="w-full px-4 py-3 input-soft rounded-xl focus:outline-none"
+                               placeholder="Posisi awal">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Panjang Alas (L_tri)</label>
+                        <input type="number" id="${loadId}-length" value="3" step="0.1" min="0" 
+                               class="w-full px-4 py-3 input-soft rounded-xl focus:outline-none"
+                               placeholder="Panjang alas segitiga">
+                    </div>
+                `;
+            }
+            
+            inputsDiv.innerHTML = inputsHTML;
+            
+            // Initialize angle display for oblique loads
+            if (type === 'oblique') {
+                setTimeout(() => {
+                    updateAngleDisplay(loadId, 30);
+                }, 100);
+            }
+        }
+
+        function calculate() {
+            if (loads.length === 0) {
+                showNotification('Silakan tambahkan minimal satu beban terlebih dahulu! 🎯', 'warning');
+                return;
+            }
+
+            const L = parseFloat(document.getElementById('beam-length').value);
+            const leftSupport = document.getElementById('left-support').value;
+            const rightSupport = document.getElementById('right-support').value;
+            const forceUnit = document.getElementById('force-unit').value;
+            const lengthUnit = document.getElementById('length-unit').value;
+
+            // Validate inputs
+            if (!L || L <= 0) {
+                showNotification('Panjang balok harus lebih dari 0! 📏', 'error');
+                return;
+            }
+
+            // Collect load data
+            const loadData = [];
+            for (const load of loads) {
+                const type = document.getElementById(`${load.id}-type`).value;
+                let loadInfo = { type, id: load.id };
+
+                if (type === 'point') {
+                    const magnitude = parseFloat(document.getElementById(`${load.id}-magnitude`).value);
+                    const position = parseFloat(document.getElementById(`${load.id}-position`).value);
+                    
+                    if (!magnitude || magnitude <= 0) {
+                        showNotification(`Besar beban ${load.id} harus lebih dari 0! ⚠️`, 'error');
+                        return;
+                    }
+                    if (position < 0 || position > L) {
+                        showNotification(`Posisi beban ${load.id} harus antara 0 dan ${L}! 📍`, 'error');
+                        return;
+                    }
+                    
+                    loadInfo = { ...loadInfo, magnitude, position };
+                } else if (type === 'point-angled') {
+                    const magnitude = parseFloat(document.getElementById(`${load.id}-magnitude`).value);
+                    const position = parseFloat(document.getElementById(`${load.id}-position`).value);
+                    const angleValue = parseFloat(document.getElementById(`${load.id}-angle`).value);
+                    const angleUnit = document.getElementById(`${load.id}-angle-unit`).value;
+                    
+                    if (!magnitude || magnitude <= 0) {
+                        showNotification(`Besar beban ${load.id} harus lebih dari 0! ⚠️`, 'error');
+                        return;
+                    }
+                    if (position < 0 || position > L) {
+                        showNotification(`Posisi beban ${load.id} harus antara 0 dan ${L}! 📍`, 'error');
+                        return;
+                    }
+                    
+                    // Convert angle to degrees for internal calculations
+                    let angleInDegrees;
+                    if (angleUnit === 'radians') {
+                        angleInDegrees = (angleValue * 180) / Math.PI;
+                        // Validate radian range (-π/2 to π/2)
+                        if (angleValue < -Math.PI/2 || angleValue > Math.PI/2) {
+                            showNotification(`Sudut beban ${load.id} harus antara -π/2 dan π/2 radian! 📐`, 'error');
+                            return;
+                        }
+                    } else {
+                        angleInDegrees = angleValue;
+                        // Validate degree range
+                        if (angleValue < -90 || angleValue > 90) {
+                            showNotification(`Sudut beban ${load.id} harus antara -90° dan 90°! 📐`, 'error');
+                            return;
+                        }
+                    }
+                    
+                    loadInfo = { ...loadInfo, magnitude, position, angle: angleInDegrees, angleUnit, originalAngle: angleValue };
+                } else if (type === 'oblique') {
+                    const magnitude = parseFloat(document.getElementById(`${load.id}-magnitude`).value);
+                    const position = parseFloat(document.getElementById(`${load.id}-position`).value);
+                    const angle = parseFloat(document.getElementById(`${load.id}-angle`).value);
+                    
+                    if (!magnitude || magnitude <= 0) {
+                        showNotification(`Besar beban ${load.id} harus lebih dari 0! ⚠️`, 'error');
+                        return;
+                    }
+                    if (position < 0 || position > L) {
+                        showNotification(`Posisi beban ${load.id} harus antara 0 dan ${L}! 📍`, 'error');
+                        return;
+                    }
+                    if (angle < 0 || angle > 360) {
+                        showNotification(`Sudut beban ${load.id} harus antara 0° dan 360°! 📐`, 'error');
+                        return;
+                    }
+                    
+                    loadInfo = { ...loadInfo, magnitude, position, angle };
+                } else if (type === 'udl') {
+                    const intensity = parseFloat(document.getElementById(`${load.id}-intensity`).value);
+                    const start = parseFloat(document.getElementById(`${load.id}-start`).value);
+                    const end = parseFloat(document.getElementById(`${load.id}-end`).value);
+                    
+                    if (!intensity || intensity <= 0) {
+                        showNotification(`Intensitas beban ${load.id} harus lebih dari 0! 📏`, 'error');
+                        return;
+                    }
+                    if (start < 0 || end > L || start >= end) {
+                        showNotification(`Posisi beban ${load.id} tidak valid! Pastikan 0 ≤ x₁ < x₂ ≤ L`, 'error');
+                        return;
+                    }
+                    
+                    loadInfo = { ...loadInfo, intensity, start, end };
+                } else if (type === 'triangular') {
+                    const maxIntensity = parseFloat(document.getElementById(`${load.id}-max-intensity`).value);
+                    const start = parseFloat(document.getElementById(`${load.id}-start`).value);
+                    const length = parseFloat(document.getElementById(`${load.id}-length`).value);
+                    
+                    if (!maxIntensity || maxIntensity <= 0) {
+                        showNotification(`Intensitas maksimum beban ${load.id} harus lebih dari 0! 📐`, 'error');
+                        return;
+                    }
+                    if (start < 0 || (start + length) > L || length <= 0) {
+                        showNotification(`Dimensi beban segitiga ${load.id} tidak valid! 📐`, 'error');
+                        return;
+                    }
+                    
+                    loadInfo = { ...loadInfo, maxIntensity, start, length };
+                }
+                
+                loadData.push(loadInfo);
+            }
+
+            // Perform structural analysis
+            analysisResults = performStructuralAnalysis(L, loadData, leftSupport, rightSupport, forceUnit, lengthUnit);
+            
+            // Display results
+            displayEquilibriumCheck(analysisResults);
+            displayResults(analysisResults);
+            displaySummaryTable(analysisResults);
+            drawBeamVisualization(analysisResults);
+            drawShearDiagram(analysisResults);
+            drawMomentDiagram(analysisResults);
+            
+            // Show results section with animation
+            const resultsSection = document.getElementById('results-section');
+            resultsSection.classList.remove('hidden');
+            setTimeout(() => {
+                resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 300);
+            
+            showNotification('Analisis struktur berhasil dihitung! ✅🎉', 'success');
+        }
+
+        function performStructuralAnalysis(L, loads, leftSupport, rightSupport, forceUnit, lengthUnit) {
+            let totalVerticalLoad = 0;
+            let momentAboutA = 0;
+            let momentAboutB = 0;
+            
+            // Convert loads to equivalent point loads for equilibrium calculations
+            const equivalentLoads = [];
+            
+            loads.forEach(load => {
+                if (load.type === 'point') {
+                    equivalentLoads.push({
+                        magnitude: load.magnitude,
+                        position: load.position,
+                        horizontal: 0
+                    });
+                    totalVerticalLoad += load.magnitude;
+                    momentAboutA += load.magnitude * load.position;
+                    momentAboutB += load.magnitude * (L - load.position);
+                } else if (load.type === 'point-angled') {
+                    const angleRad = (load.angle * Math.PI) / 180;
+                    const verticalComponent = load.magnitude * Math.cos(angleRad);
+                    const horizontalComponent = load.magnitude * Math.sin(angleRad);
+                    
+                    equivalentLoads.push({
+                        magnitude: verticalComponent,
+                        position: load.position,
+                        horizontal: horizontalComponent,
+                        angle: load.angle,
+                        angleUnit: load.angleUnit,
+                        originalAngle: load.originalAngle
+                    });
+                    totalVerticalLoad += verticalComponent;
+                    momentAboutA += verticalComponent * load.position;
+                    momentAboutB += verticalComponent * (L - load.position);
+                } else if (load.type === 'oblique') {
+                    const angleRad = (load.angle * Math.PI) / 180;
+                    const horizontalComponent = load.magnitude * Math.cos(angleRad);
+                    const verticalComponent = load.magnitude * Math.sin(angleRad);
+                    
+                    equivalentLoads.push({
+                        magnitude: Math.abs(verticalComponent), // Use absolute value for vertical load
+                        position: load.position,
+                        horizontal: horizontalComponent,
+                        angle: load.angle,
+                        isOblique: true,
+                        originalVertical: verticalComponent // Keep original sign for calculations
+                    });
+                    totalVerticalLoad += Math.abs(verticalComponent); // Only downward forces contribute to vertical equilibrium
+                    momentAboutA += Math.abs(verticalComponent) * load.position;
+                    momentAboutB += Math.abs(verticalComponent) * (L - load.position);
+                } else if (load.type === 'udl') {
+                    const length = load.end - load.start;
+                    const totalLoad = load.intensity * length;
+                    const centroid = load.start + length / 2;
+                    
+                    equivalentLoads.push({
+                        magnitude: totalLoad,
+                        position: centroid
+                    });
+                    totalVerticalLoad += totalLoad;
+                    momentAboutA += totalLoad * centroid;
+                    momentAboutB += totalLoad * (L - centroid);
+                } else if (load.type === 'triangular') {
+                    const totalLoad = 0.5 * load.maxIntensity * load.length;
+                    const centroid = load.start + load.length / 3;
+                    
+                    equivalentLoads.push({
+                        magnitude: totalLoad,
+                        position: centroid
+                    });
+                    totalVerticalLoad += totalLoad;
+                    momentAboutA += totalLoad * centroid;
+                    momentAboutB += totalLoad * (L - centroid);
+                }
+            });
+
+            // Calculate horizontal reaction (RAH) from angled and oblique loads
+            let totalHorizontalLoad = 0;
+            loads.forEach(load => {
+                if (load.type === 'point-angled') {
+                    const angleRad = (load.angle * Math.PI) / 180;
+                    const horizontalComponent = load.magnitude * Math.sin(angleRad);
+                    totalHorizontalLoad += horizontalComponent;
+                } else if (load.type === 'oblique') {
+                    const angleRad = (load.angle * Math.PI) / 180;
+                    const horizontalComponent = load.magnitude * Math.cos(angleRad);
+                    totalHorizontalLoad += horizontalComponent;
+                }
+            });
+
+            // Calculate reactions based on support types
+            let RA = 0, RB = 0, MA = 0, RAH = totalHorizontalLoad;
+            
+            if (leftSupport === 'fixed' && rightSupport === 'roller') {
+                // Fixed-Roller beam
+                RB = momentAboutA / L;
+                RA = totalVerticalLoad - RB;
+                MA = momentAboutA - RB * L;
+            } else if (leftSupport === 'pinned' && rightSupport === 'roller') {
+                // Simply supported beam
+                RB = momentAboutA / L;
+                RA = totalVerticalLoad - RB;
+            } else if (leftSupport === 'pinned' && rightSupport === 'pinned') {
+                // Simply supported beam (both pinned)
+                RB = momentAboutA / L;
+                RA = totalVerticalLoad - RB;
+            } else if (leftSupport === 'fixed' && rightSupport === 'fixed') {
+                // Fixed-Fixed beam (statically indeterminate - simplified approach)
+                RA = totalVerticalLoad / 2;
+                RB = totalVerticalLoad / 2;
+                MA = -totalVerticalLoad * L / 12; // Simplified
+            } else {
+                // Default case - simply supported
+                RB = momentAboutA / L;
+                RA = totalVerticalLoad - RB;
+            }
+
+            // Check equilibrium
+            const tolerance = 0.01;
+            const verticalEquilibrium = Math.abs(RA + RB - totalVerticalLoad) < tolerance;
+            const momentEquilibrium = Math.abs(RA * L - momentAboutA + RB * 0) < tolerance;
+            const horizontalEquilibrium = Math.abs(RAH - totalHorizontalLoad) < tolerance;
+
+            // Calculate shear force and bending moment values
+            const points = [];
+            const numPoints = 200;
+            for (let i = 0; i <= numPoints; i++) {
+                points.push((i / numPoints) * L);
+            }
+
+            // Add critical points (load positions)
+            loads.forEach(load => {
+                if (load.type === 'point') {
+                    if (!points.includes(load.position)) points.push(load.position);
+                    if (!points.includes(load.position - 0.001)) points.push(load.position - 0.001);
+                    if (!points.includes(load.position + 0.001)) points.push(load.position + 0.001);
+                } else if (load.type === 'udl') {
+                    if (!points.includes(load.start)) points.push(load.start);
+                    if (!points.includes(load.end)) points.push(load.end);
+                } else if (load.type === 'triangular') {
+                    if (!points.includes(load.start)) points.push(load.start);
+                    if (!points.includes(load.start + load.length)) points.push(load.start + load.length);
+                }
+            });
+
+            points.sort((a, b) => a - b);
+
+            // Calculate shear force at each point
+            const shearValues = points.map(x => {
+                let V = RA;
+                
+                loads.forEach(load => {
+                    if (load.type === 'point' && x > load.position) {
+                        V -= load.magnitude;
+                    } else if (load.type === 'point-angled' && x > load.position) {
+                        const angleRad = (load.angle * Math.PI) / 180;
+                        const verticalComponent = load.magnitude * Math.cos(angleRad);
+                        V -= verticalComponent;
+                    } else if (load.type === 'oblique' && x > load.position) {
+                        const angleRad = (load.angle * Math.PI) / 180;
+                        const verticalComponent = load.magnitude * Math.sin(angleRad);
+                        V -= Math.abs(verticalComponent); // Always subtract downward component
+                    } else if (load.type === 'udl') {
+                        if (x > load.start && x <= load.end) {
+                            V -= load.intensity * (x - load.start);
+                        } else if (x > load.end) {
+                            V -= load.intensity * (load.end - load.start);
+                        }
+                    } else if (load.type === 'triangular') {
+                        if (x > load.start && x <= (load.start + load.length)) {
+                            const localX = x - load.start;
+                            const localIntensity = (load.maxIntensity / load.length) * localX;
+                            V -= 0.5 * localIntensity * localX;
+                        } else if (x > (load.start + load.length)) {
+                            V -= 0.5 * load.maxIntensity * load.length;
+                        }
+                    }
+                });
+                
+                return { x, V };
+            });
+
+            // Calculate bending moment at each point
+            const momentValues = points.map(x => {
+                let M = (leftSupport === 'fixed') ? MA : 0;
+                M += RA * x;
+                
+                loads.forEach(load => {
+                    if (load.type === 'point' && x > load.position) {
+                        M -= load.magnitude * (x - load.position);
+                    } else if (load.type === 'point-angled' && x > load.position) {
+                        const angleRad = (load.angle * Math.PI) / 180;
+                        const verticalComponent = load.magnitude * Math.cos(angleRad);
+                        M -= verticalComponent * (x - load.position);
+                    } else if (load.type === 'oblique' && x > load.position) {
+                        const angleRad = (load.angle * Math.PI) / 180;
+                        const verticalComponent = load.magnitude * Math.sin(angleRad);
+                        M -= Math.abs(verticalComponent) * (x - load.position); // Always use downward component
+                    } else if (load.type === 'udl') {
+                        if (x > load.start && x <= load.end) {
+                            const localLength = x - load.start;
+                            M -= load.intensity * localLength * localLength / 2;
+                        } else if (x > load.end) {
+                            const totalLength = load.end - load.start;
+                            const centroid = load.start + totalLength / 2;
+                            M -= load.intensity * totalLength * (x - centroid);
+                        }
+                    } else if (load.type === 'triangular') {
+                        if (x > load.start && x <= (load.start + load.length)) {
+                            const localX = x - load.start;
+                            const localLoad = (load.maxIntensity / load.length) * localX;
+                            M -= (localLoad * localX * localX) / 3;
+                        } else if (x > (load.start + load.length)) {
+                            const totalLoad = 0.5 * load.maxIntensity * load.length;
+                            const centroid = load.start + load.length / 3;
+                            M -= totalLoad * (x - centroid);
+                        }
+                    }
+                });
+                
+                return { x, M };
+            });
+
+            // Find maximum moment
+            let maxMoment = 0;
+            let maxMomentPosition = 0;
+            let minMoment = 0;
+            let minMomentPosition = 0;
+            
+            momentValues.forEach(point => {
+                if (point.M > maxMoment) {
+                    maxMoment = point.M;
+                    maxMomentPosition = point.x;
+                }
+                if (point.M < minMoment) {
+                    minMoment = point.M;
+                    minMomentPosition = point.x;
+                }
+            });
+
+            // Find maximum shear
+            let maxShear = 0;
+            let minShear = 0;
+            shearValues.forEach(point => {
+                if (Math.abs(point.V) > Math.abs(maxShear)) {
+                    maxShear = point.V;
+                }
+                if (point.V < minShear) {
+                    minShear = point.V;
+                }
+            });
+
+            return {
+                L,
+                loads,
+                leftSupport,
+                rightSupport,
+                forceUnit,
+                lengthUnit,
+                RA,
+                RB,
+                MA,
+                RAH,
+                totalVerticalLoad,
+                totalHorizontalLoad,
+                momentAboutA,
+                verticalEquilibrium,
+                momentEquilibrium,
+                horizontalEquilibrium,
+                shearValues,
+                momentValues,
+                maxMoment,
+                maxMomentPosition,
+                minMoment,
+                minMomentPosition,
+                maxShear,
+                minShear,
+                equivalentLoads
+            };
+        }
+
+        function displayEquilibriumCheck(results) {
+            const container = document.getElementById('equilibrium-content');
+            const { RA, RB, RAH, totalVerticalLoad, totalHorizontalLoad, momentAboutA, L, verticalEquilibrium, momentEquilibrium, horizontalEquilibrium, forceUnit, lengthUnit } = results;
+
+            const verticalCheck = Math.abs(RA + RB - totalVerticalLoad);
+            const momentCheck = Math.abs(RA * L - momentAboutA);
+            const horizontalCheck = Math.abs(RAH - totalHorizontalLoad);
+
+            let html = `
+                <div class="space-y-4">
+                    <h4 class="text-lg font-bold text-pink-700 border-b border-pink-200 pb-2">
+                        📐 Keseimbangan Gaya Vertikal (ΣFy = 0)
+                    </h4>
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-xl border-l-4 ${verticalEquilibrium ? 'border-green-500' : 'border-red-500'}">
+                        <div class="text-sm text-slate-600 mb-2">Persamaan:</div>
+                        <div class="font-mono text-lg text-slate-800 mb-2">
+                            RA + RB - ΣPv = 0
+                        </div>
+                        <div class="font-mono text-lg text-slate-800 mb-2">
+                            ${RA.toFixed(3)} + ${RB.toFixed(3)} - ${totalVerticalLoad.toFixed(3)} = ${verticalCheck.toFixed(6)}
+                        </div>
+                        <div class="flex items-center gap-2 mt-3">
+                            <span class="text-2xl">${verticalEquilibrium ? '✅' : '⚠️'}</span>
+                            <span class="font-bold ${verticalEquilibrium ? 'text-green-700' : 'text-red-700'}">
+                                ${verticalEquilibrium ? 'SEIMBANG' : 'TIDAK SEIMBANG'}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="space-y-4">
+                    <h4 class="text-lg font-bold text-pink-700 border-b border-pink-200 pb-2">
+                        🔄 Keseimbangan Momen (ΣM = 0)
+                    </h4>
+                    <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-xl border-l-4 ${momentEquilibrium ? 'border-green-500' : 'border-red-500'}">
+                        <div class="text-sm text-slate-600 mb-2">Persamaan (terhadap titik A):</div>
+                        <div class="font-mono text-lg text-slate-800 mb-2">
+                            RB × L - ΣM = 0
+                        </div>
+                        <div class="font-mono text-lg text-slate-800 mb-2">
+                            ${RB.toFixed(3)} × ${L} - ${momentAboutA.toFixed(3)} = ${momentCheck.toFixed(6)}
+                        </div>
+                        <div class="flex items-center gap-2 mt-3">
+                            <span class="text-2xl">${momentEquilibrium ? '✅' : '⚠️'}</span>
+                            <span class="font-bold ${momentEquilibrium ? 'text-green-700' : 'text-red-700'}">
+                                ${momentEquilibrium ? 'SEIMBANG' : 'TIDAK SEIMBANG'}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Add horizontal equilibrium check if there are horizontal forces
+            if (totalHorizontalLoad !== 0) {
+                html += `
+                    <div class="space-y-4 md:col-span-2">
+                        <h4 class="text-lg font-bold text-pink-700 border-b border-pink-200 pb-2">
+                            ↔️ Keseimbangan Gaya Horizontal (ΣFx = 0)
+                        </h4>
+                        <div class="bg-gradient-to-r from-orange-50 to-yellow-50 p-4 rounded-xl border-l-4 ${horizontalEquilibrium ? 'border-green-500' : 'border-red-500'}">
+                            <div class="text-sm text-slate-600 mb-2">Persamaan:</div>
+                            <div class="font-mono text-lg text-slate-800 mb-2">
+                                RAH - ΣPh = 0
+                            </div>
+                            <div class="font-mono text-lg text-slate-800 mb-2">
+                                ${RAH.toFixed(3)} - ${totalHorizontalLoad.toFixed(3)} = ${horizontalCheck.toFixed(6)}
+                            </div>
+                            <div class="flex items-center gap-2 mt-3">
+                                <span class="text-2xl">${horizontalEquilibrium ? '✅' : '⚠️'}</span>
+                                <span class="font-bold ${horizontalEquilibrium ? 'text-green-700' : 'text-red-700'}">
+                                    ${horizontalEquilibrium ? 'SEIMBANG' : 'TIDAK SEIMBANG'}
+                                </span>
+                            </div>
+                            <div class="mt-3 p-3 bg-gradient-to-r from-pink-50 to-purple-50 rounded-lg border border-pink-200">
+                                <div class="text-sm font-semibold text-pink-700 mb-2">📊 Komponen Horizontal:</div>
+                                <div class="text-xs text-slate-600">
+                                    RAH = ${RAH.toFixed(3)} ${forceUnit} ${RAH >= 0 ? '(ke kanan →)' : '(ke kiri ←)'}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function displayResults(results) {
+            const container = document.getElementById('results-content');
+            const { RA, RB, MA, RAH, forceUnit, lengthUnit, maxMoment, maxMomentPosition, minMoment, minMomentPosition, maxShear, minShear } = results;
+
+            let html = `
+                <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-2xl border-l-4 border-blue-500 shadow-lg">
+                    <div class="text-sm text-slate-600 mb-2">Reaksi Kiri (RA)</div>
+                    <div class="text-2xl font-bold text-blue-800 mb-2">
+                        ${Math.abs(RA).toFixed(3)} ${forceUnit}
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-2xl">${RA >= 0 ? '⬆️' : '⬇️'}</span>
+                        <span class="text-sm font-semibold ${RA >= 0 ? 'text-green-600' : 'text-red-600'}">
+                            ${RA >= 0 ? 'Ke Atas' : 'Ke Bawah'}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-2xl border-l-4 border-green-500 shadow-lg">
+                    <div class="text-sm text-slate-600 mb-2">Reaksi Kanan (RB)</div>
+                    <div class="text-2xl font-bold text-green-800 mb-2">
+                        ${Math.abs(RB).toFixed(3)} ${forceUnit}
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-2xl">${RB >= 0 ? '⬆️' : '⬇️'}</span>
+                        <span class="text-sm font-semibold ${RB >= 0 ? 'text-green-600' : 'text-red-600'}">
+                            ${RB >= 0 ? 'Ke Atas' : 'Ke Bawah'}
+                        </span>
+                    </div>
+                </div>
+            `;
+
+            if (results.leftSupport === 'fixed') {
+                html += `
+                    <div class="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-2xl border-l-4 border-purple-500 shadow-lg">
+                        <div class="text-sm text-slate-600 mb-2">Momen di A (MA)</div>
+                        <div class="text-2xl font-bold text-purple-800 mb-2">
+                            ${Math.abs(MA).toFixed(3)} ${forceUnit}·${lengthUnit}
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl">${MA >= 0 ? '↻' : '↺'}</span>
+                            <span class="text-sm font-semibold ${MA >= 0 ? 'text-green-600' : 'text-red-600'}">
+                                ${MA >= 0 ? 'Searah Jarum Jam' : 'Berlawanan Jarum Jam'}
+                            </span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (RAH !== 0) {
+                html += `
+                    <div class="bg-gradient-to-br from-orange-50 to-orange-100 p-6 rounded-2xl border-l-4 border-orange-500 shadow-lg">
+                        <div class="text-sm text-slate-600 mb-2">Reaksi Horizontal (RAH)</div>
+                        <div class="text-2xl font-bold text-orange-800 mb-2">
+                            ${Math.abs(RAH).toFixed(3)} ${forceUnit}
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl">${RAH >= 0 ? '➡️' : '⬅️'}</span>
+                            <span class="text-sm font-semibold ${RAH >= 0 ? 'text-green-600' : 'text-red-600'}">
+                                ${RAH >= 0 ? 'Ke Kanan' : 'Ke Kiri'}
+                            </span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function displaySummaryTable(results) {
+            const container = document.getElementById('summary-table');
+            const { maxMoment, maxMomentPosition, minMoment, minMomentPosition, maxShear, minShear, forceUnit, lengthUnit } = results;
+
+            const html = `
+                <table class="w-full bg-white rounded-2xl shadow-lg overflow-hidden">
+                    <thead class="bg-gradient-to-r from-pink-500 to-purple-500 text-white">
+                        <tr>
+                            <th class="px-6 py-4 text-left font-bold">Parameter</th>
+                            <th class="px-6 py-4 text-left font-bold">Nilai</th>
+                            <th class="px-6 py-4 text-left font-bold">Posisi</th>
+                            <th class="px-6 py-4 text-left font-bold">Satuan</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-pink-100">
+                        <tr class="hover:bg-pink-50 transition-colors">
+                            <td class="px-6 py-4 font-semibold text-pink-700">Momen Maksimum (M_max)</td>
+                            <td class="px-6 py-4 text-2xl font-bold text-green-600">${Math.abs(maxMoment).toFixed(3)}</td>
+                            <td class="px-6 py-4 font-mono text-blue-600">${maxMomentPosition.toFixed(3)} ${lengthUnit}</td>
+                            <td class="px-6 py-4 text-slate-600">${forceUnit}·${lengthUnit}</td>
+                        </tr>
+                        <tr class="hover:bg-pink-50 transition-colors">
+                            <td class="px-6 py-4 font-semibold text-pink-700">Momen Minimum (M_min)</td>
+                            <td class="px-6 py-4 text-2xl font-bold text-red-600">${minMoment.toFixed(3)}</td>
+                            <td class="px-6 py-4 font-mono text-blue-600">${minMomentPosition.toFixed(3)} ${lengthUnit}</td>
+                            <td class="px-6 py-4 text-slate-600">${forceUnit}·${lengthUnit}</td>
+                        </tr>
+                        <tr class="hover:bg-pink-50 transition-colors">
+                            <td class="px-6 py-4 font-semibold text-pink-700">Gaya Lintang Maksimum (V_max)</td>
+                            <td class="px-6 py-4 text-2xl font-bold text-green-600">${maxShear.toFixed(3)}</td>
+                            <td class="px-6 py-4 text-slate-400">-</td>
+                            <td class="px-6 py-4 text-slate-600">${forceUnit}</td>
+                        </tr>
+                        <tr class="hover:bg-pink-50 transition-colors">
+                            <td class="px-6 py-4 font-semibold text-pink-700">Gaya Lintang Minimum (V_min)</td>
+                            <td class="px-6 py-4 text-2xl font-bold text-red-600">${minShear.toFixed(3)}</td>
+                            <td class="px-6 py-4 text-slate-400">-</td>
+                            <td class="px-6 py-4 text-slate-600">${forceUnit}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function drawBeamVisualization(results) {
+            const canvas = document.getElementById('beam-canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const { L, loads, RA, RB, MA, RAH, leftSupport, rightSupport, forceUnit } = results;
+            const scale = 900 / L;
+            const offsetX = 150;
+            const beamY = 200;
+
+            // Draw beam
+            ctx.strokeStyle = '#1e40af';
+            ctx.lineWidth = 8;
+            ctx.beginPath();
+            ctx.moveTo(offsetX, beamY);
+            ctx.lineTo(offsetX + L * scale, beamY);
+            ctx.stroke();
+
+            // Draw supports
+            drawSupport(ctx, offsetX, beamY, leftSupport, 'A');
+            drawSupport(ctx, offsetX + L * scale, beamY, rightSupport, 'B');
+
+            // Draw loads
+            loads.forEach((load, index) => {
+                if (load.type === 'point') {
+                    drawPointLoad(ctx, offsetX + load.position * scale, beamY, load.magnitude, `P${index + 1}`, forceUnit);
+                } else if (load.type === 'point-angled') {
+                    drawAngledLoad(ctx, offsetX + load.position * scale, beamY, load.magnitude, load.angle, load.angleUnit, load.originalAngle, `P${index + 1}`, forceUnit);
+                } else if (load.type === 'oblique') {
+                    drawObliqueLoad(ctx, offsetX + load.position * scale, beamY, load.magnitude, load.angle, `P${index + 1}`, forceUnit);
+                } else if (load.type === 'udl') {
+                    drawUDL(ctx, offsetX + load.start * scale, offsetX + load.end * scale, beamY, load.intensity, `w${index + 1}`, forceUnit);
+                } else if (load.type === 'triangular') {
+                    drawTriangularLoad(ctx, offsetX + load.start * scale, offsetX + (load.start + load.length) * scale, beamY, load.maxIntensity, `w${index + 1}`, forceUnit);
+                }
+            });
+
+            // Draw reactions
+            if (RA !== 0) drawReaction(ctx, offsetX, beamY, RA, 'RA', forceUnit);
+            if (RB !== 0) drawReaction(ctx, offsetX + L * scale, beamY, RB, 'RB', forceUnit);
+            if (MA !== 0) drawMomentReaction(ctx, offsetX, beamY, MA, 'MA', forceUnit);
+            if (RAH !== 0) drawHorizontalReaction(ctx, offsetX, beamY, RAH, 'RAH', forceUnit);
+
+            // Draw scale
+            ctx.fillStyle = '#1e40af';
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'center';
+            const scaleInterval = Math.max(0.5, Math.floor(L / 10));
+            for (let i = 0; i <= L; i += scaleInterval) {
+                const x = offsetX + i * scale;
+                ctx.fillText(`${i}m`, x, beamY + 60);
+                ctx.beginPath();
+                ctx.moveTo(x, beamY + 10);
+                ctx.lineTo(x, beamY + 20);
+                ctx.stroke();
+            }
+
+            // Draw title
+            ctx.fillStyle = '#db2777';
+            ctx.font = 'bold 18px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Diagram Balok dan Beban', canvas.width / 2, 30);
+        }
+
+        function drawSupport(ctx, x, y, type, label) {
+            ctx.strokeStyle = '#1e40af';
+            ctx.fillStyle = '#1e40af';
+            ctx.lineWidth = 3;
+
+            if (type === 'pinned') {
+                // Draw triangle
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(x - 25, y + 40);
+                ctx.lineTo(x + 25, y + 40);
+                ctx.closePath();
+                ctx.stroke();
+                ctx.fill();
+            } else if (type === 'roller') {
+                // Draw triangle with rollers
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(x - 25, y + 35);
+                ctx.lineTo(x + 25, y + 35);
+                ctx.closePath();
+                ctx.stroke();
+                
+                // Draw rollers
+                ctx.beginPath();
+                ctx.arc(x - 15, y + 45, 8, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(x + 15, y + 45, 8, 0, Math.PI * 2);
+                ctx.fill();
+            } else if (type === 'fixed') {
+                // Draw fixed support
+                ctx.fillRect(x - 6, y, 12, 45);
+                // Draw hatching
+                for (let i = 0; i < 8; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(x - 25, y + 45 + i * 5);
+                    ctx.lineTo(x + 25, y + 50 + i * 5);
+                    ctx.stroke();
+                }
+            }
+
+            // Draw label
+            ctx.fillStyle = '#1e40af';
+            ctx.font = 'bold 16px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(label, x, y + 80);
+        }
+
+        function drawPointLoad(ctx, x, y, magnitude, label, unit) {
+            // Draw arrow
+            ctx.strokeStyle = '#dc2626';
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.moveTo(x, y - 80);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+
+            // Draw arrowhead
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x - 15, y - 25);
+            ctx.lineTo(x + 15, y - 25);
+            ctx.closePath();
+            ctx.fillStyle = '#dc2626';
+            ctx.fill();
+
+            // Draw label
+            ctx.fillStyle = '#dc2626';
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(`${label} = ${magnitude}${unit}`, x, y - 90);
+        }
+
+        function drawAngledLoad(ctx, x, y, magnitude, angle, angleUnit, originalAngle, label, unit) {
+            const angleRad = (angle * Math.PI) / 180;
+            const arrowLength = 80;
+            const endX = x + arrowLength * Math.sin(angleRad);
+            const endY = y - arrowLength * Math.cos(angleRad);
+
+            // Draw arrow
+            ctx.strokeStyle = '#dc2626';
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.moveTo(endX, endY);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+
+            // Draw arrowhead
+            const arrowHeadLength = 25;
+            const arrowAngle = Math.PI / 6;
+            const arrowX1 = x - arrowHeadLength * Math.sin(angleRad - arrowAngle);
+            const arrowY1 = y + arrowHeadLength * Math.cos(angleRad - arrowAngle);
+            const arrowX2 = x - arrowHeadLength * Math.sin(angleRad + arrowAngle);
+            const arrowY2 = y + arrowHeadLength * Math.cos(angleRad + arrowAngle);
+
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(arrowX1, arrowY1);
+            ctx.lineTo(arrowX2, arrowY2);
+            ctx.closePath();
+            ctx.fillStyle = '#dc2626';
+            ctx.fill();
+
+            // Draw label with appropriate unit
+            ctx.fillStyle = '#dc2626';
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(`${label} = ${magnitude}${unit}`, endX, endY - 15);
+            
+            const angleSymbol = angleUnit === 'radians' ? 'rad' : '°';
+            ctx.fillText(`∠${originalAngle.toFixed(1)}${angleSymbol}`, endX, endY - 30);
+        }
+
+        function drawUDL(ctx, startX, endX, y, intensity, label, unit) {
+            // Draw distributed arrows
+            const numArrows = Math.max(4, Math.floor((endX - startX) / 40));
+            const spacing = (endX - startX) / numArrows;
+            
+            ctx.strokeStyle = '#dc2626';
+            ctx.lineWidth = 4;
+            ctx.fillStyle = '#dc2626';
+            
+            for (let i = 0; i <= numArrows; i++) {
+                const x = startX + i * spacing;
+                // Draw arrow
+                ctx.beginPath();
+                ctx.moveTo(x, y - 60);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+                
+                // Draw arrowhead
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(x - 8, y - 15);
+                ctx.lineTo(x + 8, y - 15);
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            // Draw top line
+            ctx.beginPath();
+            ctx.moveTo(startX, y - 60);
+            ctx.lineTo(endX, y - 60);
+            ctx.stroke();
+
+            // Draw label
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(`${label} = ${intensity}${unit}/m`, (startX + endX) / 2, y - 75);
+        }
+
+        function drawTriangularLoad(ctx, startX, endX, y, maxIntensity, label, unit) {
+            // Draw triangular load
+            ctx.strokeStyle = '#dc2626';
+            ctx.lineWidth = 4;
+            ctx.fillStyle = 'rgba(220, 38, 38, 0.3)';
+            
+            // Draw triangle
+            ctx.beginPath();
+            ctx.moveTo(startX, y);
+            ctx.lineTo(startX, y - 60);
+            ctx.lineTo(endX, y);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // Draw arrows
+            const numArrows = Math.max(4, Math.floor((endX - startX) / 30));
+            ctx.fillStyle = '#dc2626';
+            
+            for (let i = 0; i <= numArrows; i++) {
+                const x = startX + i * (endX - startX) / numArrows;
+                const arrowHeight = (60 * (x - startX)) / (endX - startX);
+                
+                if (arrowHeight > 8) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, y - arrowHeight);
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                    ctx.lineTo(x - 6, y - 12);
+                    ctx.lineTo(x + 6, y - 12);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+            }
+
+            // Draw label
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(`${label} = ${maxIntensity}${unit}/m`, (startX + endX) / 2, y - 75);
+        }
+
+        function drawReaction(ctx, x, y, magnitude, label, unit) {
+            const direction = magnitude >= 0 ? -1 : 1;
+            const arrowLength = 60;
+            const arrowY = y + direction * arrowLength;
+
+            // Draw arrow
+            ctx.strokeStyle = '#059669';
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x, arrowY);
+            ctx.stroke();
+
+            // Draw arrowhead
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x - 12, y + direction * 25);
+            ctx.lineTo(x + 12, y + direction * 25);
+            ctx.closePath();
+            ctx.fillStyle = '#059669';
+            ctx.fill();
+
+            // Draw label
+            ctx.fillStyle = '#059669';
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(`${label} = ${Math.abs(magnitude).toFixed(2)}${unit}`, x, arrowY + direction * 25);
+        }
+
+        function drawMomentReaction(ctx, x, y, moment, label, unit) {
+            const radius = 30;
+            const direction = moment >= 0 ? 1 : -1;
+
+            // Draw circular arrow
+            ctx.strokeStyle = '#7c3aed';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, 1.5 * Math.PI * direction);
+            ctx.stroke();
+
+            // Draw arrowhead
+            const arrowX = x + radius * Math.cos(1.5 * Math.PI * direction);
+            const arrowY = y + radius * Math.sin(1.5 * Math.PI * direction);
+            ctx.beginPath();
+            ctx.moveTo(arrowX, arrowY);
+            ctx.lineTo(arrowX - 10 * direction, arrowY - 10);
+            ctx.lineTo(arrowX - 10 * direction, arrowY + 10);
+            ctx.closePath();
+            ctx.fillStyle = '#7c3aed';
+            ctx.fill();
+
+            // Draw label
+            ctx.fillStyle = '#7c3aed';
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(`${label} = ${Math.abs(moment).toFixed(2)}${unit}·m`, x, y - 50);
+        }
+
+        function drawObliqueLoad(ctx, x, y, magnitude, angle, label, unit) {
+            const angleRad = (angle * Math.PI) / 180;
+            const arrowLength = 80;
+            
+            // Calculate arrow end position based on angle from horizontal
+            const endX = x + arrowLength * Math.cos(angleRad);
+            const endY = y - arrowLength * Math.sin(angleRad);
+
+            // Draw main oblique arrow with animated gradient
+            const gradient = ctx.createLinearGradient(x, y, endX, endY);
+            gradient.addColorStop(0, '#ec4899');
+            gradient.addColorStop(0.5, '#f472b6');
+            gradient.addColorStop(1, '#fbbf24');
+            
+            ctx.strokeStyle = gradient;
+            ctx.lineWidth = 6;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(endX, endY);
+            ctx.stroke();
+
+            // Draw arrowhead at the end of the arrow
+            const arrowHeadLength = 25;
+            const arrowAngle = Math.PI / 6;
+            const arrowX1 = endX - arrowHeadLength * Math.cos(angleRad - arrowAngle);
+            const arrowY1 = endY + arrowHeadLength * Math.sin(angleRad - arrowAngle);
+            const arrowX2 = endX - arrowHeadLength * Math.cos(angleRad + arrowAngle);
+            const arrowY2 = endY + arrowHeadLength * Math.sin(angleRad + arrowAngle);
+
+            ctx.beginPath();
+            ctx.moveTo(endX, endY);
+            ctx.lineTo(arrowX1, arrowY1);
+            ctx.lineTo(arrowX2, arrowY2);
+            ctx.closePath();
+            ctx.fillStyle = '#ec4899';
+            ctx.fill();
+
+            // Calculate components using standard coordinate system
+            const horizontalComponent = magnitude * Math.cos(angleRad);
+            const verticalComponent = magnitude * Math.sin(angleRad);
+
+            // Draw component arrows with dashed lines
+            ctx.setLineDash([8, 4]);
+            ctx.lineWidth = 3;
+            
+            // Horizontal component
+            const hCompLength = Math.abs(horizontalComponent) * 0.6; // Scale for visibility
+            const hEndX = x + (horizontalComponent >= 0 ? hCompLength : -hCompLength);
+            ctx.strokeStyle = '#3b82f6';
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(hEndX, y);
+            ctx.stroke();
+            
+            // Vertical component  
+            const vCompLength = Math.abs(verticalComponent) * 0.6; // Scale for visibility
+            const vEndY = y - (verticalComponent >= 0 ? vCompLength : -vCompLength);
+            ctx.strokeStyle = '#10b981';
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x, vEndY);
+            ctx.stroke();
+            
+            ctx.setLineDash([]); // Reset dash
+
+            // Draw component arrowheads
+            // Horizontal arrowhead
+            ctx.fillStyle = '#3b82f6';
+            const hArrowDir = horizontalComponent >= 0 ? 1 : -1;
+            ctx.beginPath();
+            ctx.moveTo(hEndX, y);
+            ctx.lineTo(hEndX - 12 * hArrowDir, y - 8);
+            ctx.lineTo(hEndX - 12 * hArrowDir, y + 8);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Vertical arrowhead
+            ctx.fillStyle = '#10b981';
+            const vArrowDir = verticalComponent >= 0 ? -1 : 1;
+            ctx.beginPath();
+            ctx.moveTo(x, vEndY);
+            ctx.lineTo(x - 8, vEndY + 12 * vArrowDir);
+            ctx.lineTo(x + 8, vEndY + 12 * vArrowDir);
+            ctx.closePath();
+            ctx.fill();
+
+            // Draw labels with soft pink background
+            ctx.fillStyle = '#ec4899';
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'center';
+            
+            // Main load label positioned along the arrow
+            const labelX = x + (endX - x) * 0.6;
+            const labelY = y + (endY - y) * 0.6 - 15;
+            
+            // Background for main label
+            ctx.fillStyle = 'rgba(236, 72, 153, 0.1)';
+            ctx.fillRect(labelX - 45, labelY - 20, 90, 35);
+            ctx.strokeStyle = '#ec4899';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(labelX - 45, labelY - 20, 90, 35);
+            
+            ctx.fillStyle = '#ec4899';
+            ctx.fillText(`${label} = ${magnitude}${unit}`, labelX, labelY);
+            ctx.fillText(`∠${angle.toFixed(0)}°`, labelX, labelY + 15);
+
+            // Component labels with better positioning
+            ctx.font = 'bold 12px Arial';
+            
+            // Horizontal component label
+            ctx.fillStyle = '#3b82f6';
+            const hLabelX = x + (hEndX - x) * 0.5;
+            const hDirection = horizontalComponent >= 0 ? '→' : '←';
+            ctx.fillText(`Fx = ${Math.abs(horizontalComponent).toFixed(2)}${unit} ${hDirection}`, hLabelX, y - 15);
+            
+            // Vertical component label
+            ctx.fillStyle = '#10b981';
+            const vLabelY = y + (vEndY - y) * 0.5;
+            const vDirection = verticalComponent >= 0 ? '↑' : '↓';
+            ctx.fillText(`Fy = ${Math.abs(verticalComponent).toFixed(2)}${unit} ${vDirection}`, x - 70, vLabelY);
+        }
+
+        function drawHorizontalReaction(ctx, x, y, force, label, unit) {
+            const direction = force >= 0 ? 1 : -1;
+            const arrowLength = 60;
+            const arrowX = x + direction * arrowLength;
+
+            // Draw arrow
+            ctx.strokeStyle = '#f97316';
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(arrowX, y);
+            ctx.stroke();
+
+            // Draw arrowhead
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + direction * 25, y - 12);
+            ctx.lineTo(x + direction * 25, y + 12);
+            ctx.closePath();
+            ctx.fillStyle = '#f97316';
+            ctx.fill();
+
+            // Draw label
+            ctx.fillStyle = '#f97316';
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(`${label} = ${Math.abs(force).toFixed(2)}${unit}`, x, y - 30);
+        }
+
+        function drawShearDiagram(results) {
+            const canvas = document.getElementById('shear-canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const { L, shearValues, forceUnit } = results;
+            const scale = 500 / L;
+            const offsetX = 50;
+            const zeroY = 250;
+            
+            // Find max shear for scaling
+            const maxShear = Math.max(...shearValues.map(v => Math.abs(v.V)));
+            const shearScale = maxShear > 0 ? 180 / maxShear : 1;
+
+            // Draw title
+            ctx.fillStyle = '#db2777';
+            ctx.font = 'bold 18px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Diagram Gaya Lintang (SFD)', canvas.width / 2, 25);
+
+            // Draw axes
+            ctx.strokeStyle = '#64748b';
+            ctx.lineWidth = 2;
+            
+            // X-axis (zero line)
+            ctx.beginPath();
+            ctx.moveTo(offsetX, zeroY);
+            ctx.lineTo(offsetX + L * scale, zeroY);
+            ctx.stroke();
+            
+            // Y-axis
+            ctx.beginPath();
+            ctx.moveTo(offsetX, zeroY - 180);
+            ctx.lineTo(offsetX, zeroY + 180);
+            ctx.stroke();
+
+            // Fill areas with hatching
+            shearValues.forEach((point, i) => {
+                if (i < shearValues.length - 1) {
+                    const x1 = offsetX + point.x * scale;
+                    const y1 = zeroY - point.V * shearScale;
+                    const x2 = offsetX + shearValues[i + 1].x * scale;
+                    const y2 = zeroY - shearValues[i + 1].V * shearScale;
+                    
+                    // Fill positive areas with horizontal hatching
+                    if (point.V > 0 || shearValues[i + 1].V > 0) {
+                        ctx.fillStyle = 'rgba(59, 130, 246, 0.2)';
+                        ctx.beginPath();
+                        ctx.moveTo(x1, zeroY);
+                        ctx.lineTo(x1, y1);
+                        ctx.lineTo(x2, y2);
+                        ctx.lineTo(x2, zeroY);
+                        ctx.closePath();
+                        ctx.fill();
+                        
+                        // Add horizontal hatching
+                        ctx.strokeStyle = 'rgba(59, 130, 246, 0.5)';
+                        ctx.lineWidth = 1;
+                        for (let hatch = Math.min(y1, y2, zeroY); hatch <= Math.max(y1, y2, zeroY); hatch += 8) {
+                            if (hatch < zeroY) {
+                                ctx.beginPath();
+                                ctx.moveTo(x1, hatch);
+                                ctx.lineTo(x2, hatch);
+                                ctx.stroke();
+                            }
+                        }
+                    }
+                    
+                    // Fill negative areas with vertical hatching
+                    if (point.V < 0 || shearValues[i + 1].V < 0) {
+                        ctx.fillStyle = 'rgba(239, 68, 68, 0.2)';
+                        ctx.beginPath();
+                        ctx.moveTo(x1, zeroY);
+                        ctx.lineTo(x1, y1);
+                        ctx.lineTo(x2, y2);
+                        ctx.lineTo(x2, zeroY);
+                        ctx.closePath();
+                        ctx.fill();
+                        
+                        // Add vertical hatching
+                        ctx.strokeStyle = 'rgba(239, 68, 68, 0.5)';
+                        ctx.lineWidth = 1;
+                        for (let hatch = x1; hatch <= x2; hatch += 8) {
+                            ctx.beginPath();
+                            ctx.moveTo(hatch, Math.max(y1, y2));
+                            ctx.lineTo(hatch, zeroY);
+                            ctx.stroke();
+                        }
+                    }
+                }
+            });
+
+            // Draw shear diagram
+            ctx.strokeStyle = '#3b82f6';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            
+            shearValues.forEach((point, i) => {
+                const x = offsetX + point.x * scale;
+                const y = zeroY - point.V * shearScale;
+                
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+            ctx.stroke();
+
+            // Add labels and grid
+            ctx.fillStyle = '#1e40af';
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText(`V (${forceUnit})`, 10, zeroY - 190);
+            
+            // Add key values
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            shearValues.forEach((point, i) => {
+                if (i % 40 === 0 || Math.abs(point.V) > maxShear * 0.8) {
+                    const x = offsetX + point.x * scale;
+                    const y = zeroY - point.V * shearScale;
+                    if (Math.abs(point.V) > 0.01) {
+                        ctx.fillText(point.V.toFixed(1), x, y - 10);
+                    }
+                }
+            });
+        }
+
+        function drawMomentDiagram(results) {
+            const canvas = document.getElementById('moment-canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const { L, momentValues, maxMoment, maxMomentPosition, minMoment, minMomentPosition, forceUnit, lengthUnit } = results;
+            const scale = 500 / L;
+            const offsetX = 50;
+            const zeroY = 250;
+            
+            // Find max moment for scaling
+            const maxMomentAbs = Math.max(...momentValues.map(v => Math.abs(v.M)));
+            const momentScale = maxMomentAbs > 0 ? 180 / maxMomentAbs : 1;
+
+            // Draw title
+            ctx.fillStyle = '#db2777';
+            ctx.font = 'bold 18px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Diagram Momen Lentur (BMD)', canvas.width / 2, 25);
+
+            // Draw axes
+            ctx.strokeStyle = '#64748b';
+            ctx.lineWidth = 2;
+            
+            // X-axis (zero line)
+            ctx.beginPath();
+            ctx.moveTo(offsetX, zeroY);
+            ctx.lineTo(offsetX + L * scale, zeroY);
+            ctx.stroke();
+            
+            // Y-axis
+            ctx.beginPath();
+            ctx.moveTo(offsetX, zeroY - 180);
+            ctx.lineTo(offsetX, zeroY + 180);
+            ctx.stroke();
+
+            // Fill area under curve with gradient
+            ctx.fillStyle = 'rgba(168, 85, 247, 0.2)';
+            ctx.beginPath();
+            ctx.moveTo(offsetX, zeroY);
+            momentValues.forEach(point => {
+                const x = offsetX + point.x * scale;
+                const y = zeroY - point.M * momentScale;
+                ctx.lineTo(x, y);
+            });
+            ctx.lineTo(offsetX + L * scale, zeroY);
+            ctx.closePath();
+            ctx.fill();
+
+            // Draw moment diagram (parabolic curve)
+            ctx.strokeStyle = '#8b5cf6';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            
+            momentValues.forEach((point, i) => {
+                const x = offsetX + point.x * scale;
+                const y = zeroY - point.M * momentScale;
+                
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+            ctx.stroke();
+
+            // Mark maximum moment
+            if (maxMoment !== 0) {
+                const maxX = offsetX + maxMomentPosition * scale;
+                const maxY = zeroY - maxMoment * momentScale;
+                
+                ctx.beginPath();
+                ctx.arc(maxX, maxY, 10, 0, Math.PI * 2);
+                ctx.fillStyle = '#dc2626';
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                // Label maximum moment
+                ctx.fillStyle = '#dc2626';
+                ctx.font = 'bold 12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`M_max = ${Math.abs(maxMoment).toFixed(2)}`, maxX, maxY - 20);
+            }
+
+            // Mark minimum moment
+            if (minMoment !== 0) {
+                const minX = offsetX + minMomentPosition * scale;
+                const minY = zeroY - minMoment * momentScale;
+                
+                ctx.beginPath();
+                ctx.arc(minX, minY, 10, 0, Math.PI * 2);
+                ctx.fillStyle = '#dc2626';
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                // Label minimum moment
+                ctx.fillStyle = '#dc2626';
+                ctx.font = 'bold 12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`M_min = ${minMoment.toFixed(2)}`, minX, minY + 30);
+            }
+
+            // Add labels
+            ctx.fillStyle = '#1e40af';
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText(`M (${forceUnit}·${lengthUnit})`, 10, zeroY - 190);
+            
+            // Add key values
+            ctx.fillStyle = '#8b5cf6';
+            ctx.font = '11px Arial';
+            ctx.textAlign = 'center';
+            momentValues.forEach((point, i) => {
+                if (i % 50 === 0 && Math.abs(point.M) > 0.01) {
+                    const x = offsetX + point.x * scale;
+                    const y = zeroY - point.M * momentScale;
+                    ctx.fillText(point.M.toFixed(1), x, y + (point.M >= 0 ? 15 : -5));
+                }
+            });
+        }
+
+        function downloadDiagram(type) {
+            let canvas;
+            let filename;
+            
+            switch(type) {
+                case 'beam':
+                    canvas = document.getElementById('beam-canvas');
+                    filename = 'beam-visualization.png';
+                    break;
+                case 'shear':
+                    canvas = document.getElementById('shear-canvas');
+                    filename = 'shear-force-diagram.png';
+                    break;
+                case 'moment':
+                    canvas = document.getElementById('moment-canvas');
+                    filename = 'bending-moment-diagram.png';
+                    break;
+                default:
+                    return;
+            }
+            
+            // Create download link
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png', 1.0);
+            link.click();
+            
+            showNotification(`${filename} berhasil didownload! 📥✨`, 'success');
+        }
+
+        function downloadResults() {
+            if (!analysisResults) {
+                showNotification('Belum ada hasil analisis untuk didownload! 📊', 'warning');
+                return;
+            }
+
+            const { RA, RB, MA, RAH, maxMoment, maxMomentPosition, minMoment, minMomentPosition, maxShear, minShear, forceUnit, lengthUnit, L, verticalEquilibrium, momentEquilibrium } = analysisResults;
+
+            const reportContent = `
+LAPORAN ANALISIS STRUKTUR BALOK SEDERHANA
+==========================================
+
+KONFIGURASI BALOK:
+- Panjang Balok (L): ${L} ${lengthUnit}
+- Tumpuan Kiri: ${analysisResults.leftSupport}
+- Tumpuan Kanan: ${analysisResults.rightSupport}
+
+HASIL REAKSI TUMPUAN:
+- RA = ${RA.toFixed(3)} ${forceUnit} ${RA >= 0 ? '(ke atas)' : '(ke bawah)'}
+- RB = ${RB.toFixed(3)} ${forceUnit} ${RB >= 0 ? '(ke atas)' : '(ke bawah)'}
+${MA !== 0 ? `- MA = ${MA.toFixed(3)} ${forceUnit}·${lengthUnit}` : ''}
+${RAH !== 0 ? `- RAH = ${RAH.toFixed(3)} ${forceUnit} ${RAH >= 0 ? '(ke kanan)' : '(ke kiri)'}` : ''}
+
+KONTROL KESEIMBANGAN:
+- Keseimbangan Vertikal (ΣFy = 0): ${verticalEquilibrium ? '✅ SEIMBANG' : '⚠️ TIDAK SEIMBANG'}
+- Keseimbangan Momen (ΣM = 0): ${momentEquilibrium ? '✅ SEIMBANG' : '⚠️ TIDAK SEIMBANG'}
+
+HASIL ANALISIS:
+- Momen Maksimum: ${Math.abs(maxMoment).toFixed(3)} ${forceUnit}·${lengthUnit} pada x = ${maxMomentPosition.toFixed(3)} ${lengthUnit}
+- Momen Minimum: ${minMoment.toFixed(3)} ${forceUnit}·${lengthUnit} pada x = ${minMomentPosition.toFixed(3)} ${lengthUnit}
+- Gaya Lintang Maksimum: ${maxShear.toFixed(3)} ${forceUnit}
+- Gaya Lintang Minimum: ${minShear.toFixed(3)} ${forceUnit}
+
+Dibuat dengan Analisis Struktur Balok Sederhana
+Tanggal: ${new Date().toLocaleDateString('id-ID')}
+            `;
+
+            const blob = new Blob([reportContent], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.download = 'laporan-analisis-balok.txt';
+            link.href = URL.createObjectURL(blob);
+            link.click();
+            
+            showNotification('Laporan analisis berhasil didownload! 📄✨', 'success');
+        }
+
+        function resetAll() {
+            // Reset form values
+            document.getElementById('beam-length').value = '6';
+            document.getElementById('left-support').value = 'pinned';
+            document.getElementById('right-support').value = 'roller';
+            document.getElementById('force-unit').value = 'kN';
+            document.getElementById('length-unit').value = 'm';
+            
+            // Clear loads with animation
+            const loadCards = document.querySelectorAll('.load-card');
+            loadCards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.transform = 'scale(0.8)';
+                    card.style.opacity = '0';
+                }, index * 100);
+            });
+            
+            setTimeout(() => {
+                loads = [];
+                loadCounter = 0;
+                document.getElementById('loads-container').innerHTML = '';
+                
+                // Hide results
+                document.getElementById('results-section').classList.add('hidden');
+                
+                // Reset analysis results
+                analysisResults = null;
+                
+                showNotification('Semua data telah direset! 🔄✨', 'info');
+            }, 500);
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification fixed top-4 left-4 px-6 py-4 rounded-2xl shadow-2xl z-50 transform -translate-x-full max-w-sm`;
+            
+            const colors = {
+                success: 'bg-gradient-to-r from-green-500 to-emerald-500 text-white',
+                error: 'bg-gradient-to-r from-red-500 to-pink-500 text-white',
+                info: 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white',
+                warning: 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white'
+            };
+            
+            notification.className += ` ${colors[type] || colors.info}`;
+            notification.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <div class="text-2xl">
+                        ${type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️'}
+                    </div>
+                    <div class="font-semibold">${message}</div>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.classList.remove('-translate-x-full');
+            }, 100);
+            
+            // Animate out and remove
+            setTimeout(() => {
+                notification.classList.add('-translate-x-full');
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 4000);
+        }
+
+        // Initialize with one load and load saved settings
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSavedSettings();
+            addLoad();
+        });
+    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99858b8d40ea604d',t:'MTc2MjEwNjU3MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
